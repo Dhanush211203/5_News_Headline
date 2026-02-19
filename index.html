@@ -758,6 +758,8 @@
         </footer>
     </div>
 
+    <!-- Load API key from config.js (not committed to Git) -->
+    <script src="config.js"></script>
     <script>
         /* ==============================================================
            5 Headlines a Day — Core Engine
@@ -766,9 +768,8 @@
 
         // ---- Configuration ----
         const CONFIG = {
-            // GNews API — free tier, supports CORS for browser requests
-            // Replace with your own key from https://gnews.io
-            API_KEY: '4981a040f6e7a7a43a1d684e34273c6f',
+            // API key loaded from config.js — never hardcoded here
+            API_KEY: (typeof ENV !== 'undefined' && ENV.GNEWS_API_KEY) || 'YOUR_API_KEY_HERE',
             API_BASE: 'https://gnews.io/api/v4',
             HEADLINE_COUNT: 5,
             CACHE_PREFIX: '5headlines_',
