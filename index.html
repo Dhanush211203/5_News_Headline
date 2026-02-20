@@ -876,13 +876,22 @@
            FETCH HEADLINES
         ========================= */
         async function fetchHeadlines(category) {
-            console.log('Using API key:', CONFIG.API_KEY ? (CONFIG.API_KEY.substring(0, 6) + '...') : 'MISSING');
-            const url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
+            let url;
+            // Use Netlify function proxy when deployed (avoids CORS)
+            // Fall back to direct API call for local development
+            if (window.location.hostname !== '' && !window.location.hostname.includes('localhost')) {
+                url = `/.netlify/functions/headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
+                console.log('Using Netlify proxy for API call');
+            } else {
+                url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
+                console.log('Using direct API call (local dev)');
+            }
             const response = await fetch(url);
             if (!response.ok) throw new Error(`API error: ${response.status}`);
             const data = await response.json();
             // GNews returns errors array with 200 status
             if (data.errors) throw new Error(data.errors.join(', '));
+            if (data.error) throw new Error(data.error);
             if (!data.articles || data.articles.length === 0) throw new Error('No articles found');
             return data.articles.slice(0, CONFIG.HEADLINE_COUNT);
         }
