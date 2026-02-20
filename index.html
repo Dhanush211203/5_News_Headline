@@ -876,10 +876,13 @@
            FETCH HEADLINES
         ========================= */
         async function fetchHeadlines(category) {
+            console.log('Using API key:', CONFIG.API_KEY ? (CONFIG.API_KEY.substring(0, 6) + '...') : 'MISSING');
             const url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error(`API error: ${response.status}`);
             const data = await response.json();
+            // GNews returns errors array with 200 status
+            if (data.errors) throw new Error(data.errors.join(', '));
             if (!data.articles || data.articles.length === 0) throw new Error('No articles found');
             return data.articles.slice(0, CONFIG.HEADLINE_COUNT);
         }
@@ -989,9 +992,15 @@
                 renderCards(articles);
             } catch (err) {
                 console.error('Failed to load headlines:', err);
-                renderError(err.message === 'No articles found'
-                    ? 'No articles found for this category right now. Try another category!'
-                    : 'The news API might be temporarily unavailable. Check your internet connection and try again.');
+                let errorMsg;
+                if (err.message.toLowerCase().includes('api key')) {
+                    errorMsg = 'API key is missing or invalid. Please check your config.js file.';
+                } else if (err.message === 'No articles found') {
+                    errorMsg = 'No articles found for this category right now. Try another category!';
+                } else {
+                    errorMsg = 'The news API might be temporarily unavailable. Check your internet connection and try again.';
+                }
+                renderError(errorMsg);
             }
         }
 
