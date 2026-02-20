@@ -1,0 +1,3 @@
+[build]
+  publish = "."
+  command = "echo \"const ENV = { GNEWS_API_KEY: '$GNEWS_API_KEY' };\" > config.js"
