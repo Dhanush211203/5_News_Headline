@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Headlines a Day — Your Daily News, Simplified</title>
+    <title>5 Headlines a Day — CNN News</title>
     <meta name="description"
         content="5 Headlines a Day shows you exactly five curated headlines per day. No algorithms, no infinite scroll. Just 5 important stories, beautifully displayed.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -738,14 +738,9 @@
 
         <!-- ===== Category Filters ===== -->
         <nav class="categories" id="categories">
-            <button class="category-btn active" data-category="general"><span class="cat-emoji">🌍</span>
-                General</button>
-            <button class="category-btn" data-category="technology"><span class="cat-emoji">💻</span>
-                Technology</button>
-            <button class="category-btn" data-category="sports"><span class="cat-emoji">⚽</span> Sports</button>
-            <button class="category-btn" data-category="business"><span class="cat-emoji">📈</span> Business</button>
+            <a href="index.html" class="category-btn"><span class="cat-emoji">🏠</span> Home</a>
             <a href="bbc.html" class="category-btn"><span class="cat-emoji">🔴</span> BBC</a>
-            <a href="cnn.html" class="category-btn"><span class="cat-emoji">📰</span> CNN</a>
+            <button class="category-btn active" data-category="cnn"><span class="cat-emoji">📰</span> CNN</button>
         </nav>
 
         <!-- ===== Headlines Grid ===== -->
@@ -878,7 +873,7 @@
            FETCH HEADLINES
         ========================= */
         async function fetchHeadlines(category) {
-            let url = `/.netlify/functions/headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
+            let url = `/.netlify/functions/headlines?q=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
             let response = null;
 
             if (window.location.hostname !== '' && !window.location.hostname.includes('localhost')) {
@@ -895,7 +890,7 @@
             }
 
             if (!response) {
-                url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
+                url = `${CONFIG.API_BASE}/search?q=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
                 console.log('Using direct API call (local fallback)');
                 response = await fetch(url);
             }
@@ -1034,7 +1029,7 @@
             if (!btn) return;
 
             const category = btn.dataset.category;
-            if (!category) return; // Allow normal links to work
+            if (!category) return;
 
             if (category === currentCategory) return;
 
@@ -1052,7 +1047,7 @@
         (function init() {
             initTheme();
             startCountdown();
-            loadHeadlines('general');
+            loadHeadlines('cnn');
         })();
     </script>
     <!-- Simple approach — no fetch, no eval needed -->

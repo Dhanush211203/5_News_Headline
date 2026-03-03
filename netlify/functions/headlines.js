@@ -2,7 +2,7 @@
 // Browser → this function (same origin) → GNews API (server-side, no CORS)
 
 exports.handler = async (event) => {
-    const { category = 'general', lang = 'en', max = '5' } = event.queryStringParameters || {};
+    const { category = 'general', q = '', lang = 'en', max = '5' } = event.queryStringParameters || {};
     const apiKey = process.env.GNEWS_API_KEY;
 
     if (!apiKey) {
@@ -12,7 +12,12 @@ exports.handler = async (event) => {
         };
     }
 
-    const url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=${lang}&max=${max}&apikey=${apiKey}`;
+    let url;
+    if (q) {
+        url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(q)}&lang=${lang}&max=${max}&apikey=${apiKey}`;
+    } else {
+        url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=${lang}&max=${max}&apikey=${apiKey}`;
+    }
 
     try {
         const response = await fetch(url);

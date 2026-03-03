@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 Headlines a Day — Your Daily News, Simplified</title>
+    <title>5 Headlines a Day — Article</title>
     <meta name="description"
         content="5 Headlines a Day shows you exactly five curated headlines per day. No algorithms, no infinite scroll. Just 5 important stories, beautifully displayed.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -697,12 +697,129 @@
             border-radius: 10px;
         }
 
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0 60px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .article-header {
+            margin-bottom: 30px;
+        }
+
+        .article-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .article-title {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .article-meta {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .article-image {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .article-image img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .article-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .read-original {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--gradient-accent);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .read-original:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 28px;
+            }
+
+            .article-content {
+                font-size: 16px;
+            }
+        }
+
         /* ===== Print ===== */
         @media print {
 
             .theme-toggle,
-            .categories,
-            .timer-bar {
+            .back-btn,
+            .read-original {
                 display: none;
             }
         }
@@ -727,30 +844,13 @@
             </div>
         </header>
 
-        <!-- ===== Timer ===== -->
-        <div class="timer-bar">
-            <div class="timer-pill">
-                <span class="timer-icon">⏰</span>
-                <span>Next refresh in</span>
-                <span class="timer-value" id="countdown">--:--:--</span>
-            </div>
+        <div class="nav-bar" style="margin-top: 20px;">
+            <a href="javascript:history.back()" class="back-btn">← Back to News</a>
         </div>
 
-        <!-- ===== Category Filters ===== -->
-        <nav class="categories" id="categories">
-            <button class="category-btn active" data-category="general"><span class="cat-emoji">🌍</span>
-                General</button>
-            <button class="category-btn" data-category="technology"><span class="cat-emoji">💻</span>
-                Technology</button>
-            <button class="category-btn" data-category="sports"><span class="cat-emoji">⚽</span> Sports</button>
-            <button class="category-btn" data-category="business"><span class="cat-emoji">📈</span> Business</button>
-            <a href="bbc.html" class="category-btn"><span class="cat-emoji">🔴</span> BBC</a>
-            <a href="cnn.html" class="category-btn"><span class="cat-emoji">📰</span> CNN</a>
-        </nav>
-
-        <!-- ===== Headlines Grid ===== -->
-        <main class="cards-grid" id="cardsGrid">
-            <!-- Cards will be injected by JS -->
+        <!-- ===== Article Content ===== -->
+        <main class="article-container" id="articleContainer">
+            <!-- Content will be injected by JS -->
         </main>
 
         <!-- ===== Footer ===== -->
@@ -763,17 +863,7 @@
     <!-- Load API key from config.js (not committed to Git) -->
     <script src="config.js"></script>
     <script>
-        /* ==============================================================
-           5 Headlines a Day — Core Engine
-           Zero dependencies. Zero frameworks. Just clean JavaScript.
-        ============================================================== */
-
-        // ---- Configuration ----
         const CONFIG = {
-            // API key loaded from config.js — never hardcoded here
-            API_KEY: (typeof ENV !== 'undefined' && ENV.GNEWS_API_KEY) || 'YOUR_API_KEY_HERE',
-            API_BASE: 'https://gnews.io/api/v4',
-            HEADLINE_COUNT: 5,
             CACHE_PREFIX: '5headlines_',
             FALLBACK_IMAGE: 'data:image/svg+xml,' + encodeURIComponent(
                 '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" fill="none">' +
@@ -783,20 +873,10 @@
             )
         };
 
-        // ---- DOM References ----
-        const $grid = document.getElementById('cardsGrid');
-        const $countdown = document.getElementById('countdown');
+        const $container = document.getElementById('articleContainer');
         const $themeToggle = document.getElementById('themeToggle');
         const $themeIcon = document.getElementById('themeIcon');
-        const $categories = document.getElementById('categories');
 
-        // ---- State ----
-        let currentCategory = 'general';
-        let countdownInterval = null;
-
-        /* =========================
-           THEME (Dark Mode)
-        ========================= */
         function initTheme() {
             const saved = localStorage.getItem(CONFIG.CACHE_PREFIX + 'theme');
             if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -814,245 +894,91 @@
 
         $themeToggle.addEventListener('click', toggleTheme);
 
-        /* =========================
-           COUNTDOWN TIMER
-        ========================= */
-        function updateCountdown() {
-            const now = new Date();
-            const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0);
-            const diff = midnight - now;
-
-            const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-            const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-            const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-
-            $countdown.textContent = `${h}:${m}:${s}`;
-        }
-
-        function startCountdown() {
-            updateCountdown();
-            countdownInterval = setInterval(updateCountdown, 1000);
-        }
-
-        /* =========================
-           LOCAL STORAGE CACHE
-        ========================= */
-        function getTodayKey(category) {
-            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-            return CONFIG.CACHE_PREFIX + category + '_' + today;
-        }
-
-        function getCachedHeadlines(category) {
-            try {
-                const key = getTodayKey(category);
-                const data = localStorage.getItem(key);
-                if (data) {
-                    return JSON.parse(data);
-                }
-            } catch (e) {
-                // Cache corrupted, will re-fetch
-            }
-            return null;
-        }
-
-        function cacheHeadlines(category, articles) {
-            try {
-                // Clean old caches (not today)
-                const today = new Date().toISOString().slice(0, 10);
-                for (let i = localStorage.length - 1; i >= 0; i--) {
-                    const k = localStorage.key(i);
-                    if (k && k.startsWith(CONFIG.CACHE_PREFIX) && k !== CONFIG.CACHE_PREFIX + 'theme') {
-                        if (!k.includes(today)) {
-                            localStorage.removeItem(k);
-                        }
-                    }
-                }
-                localStorage.setItem(getTodayKey(category), JSON.stringify(articles));
-            } catch (e) {
-                // localStorage full — not critical
-            }
-        }
-
-        /* =========================
-           FETCH HEADLINES
-        ========================= */
-        async function fetchHeadlines(category) {
-            let url = `/.netlify/functions/headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
-            let response = null;
-
-            if (window.location.hostname !== '' && !window.location.hostname.includes('localhost')) {
-                try {
-                    console.log('Attempting Netlify proxy for API call');
-                    const res = await fetch(url);
-                    const contentType = res.headers.get("content-type");
-                    if (res.ok && contentType && contentType.includes("application/json")) {
-                        response = res;
-                    }
-                } catch (e) {
-                    console.log('Proxy fetch failed.');
-                }
-            }
-
-            if (!response) {
-                url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
-                console.log('Using direct API call (local fallback)');
-                response = await fetch(url);
-            }
-
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
-            const data = await response.json();
-            // GNews returns errors array with 200 status
-            if (data.errors) throw new Error(data.errors.join(', '));
-            if (data.error) throw new Error(data.error);
-            if (!data.articles || data.articles.length === 0) throw new Error('No articles found');
-            return data.articles.slice(0, CONFIG.HEADLINE_COUNT);
-        }
-
-        /* =========================
-           RENDER CARDS
-        ========================= */
         function formatDate(dateStr) {
             try {
                 const d = new Date(dateStr);
-                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             } catch {
                 return '';
             }
         }
 
-        function renderCards(articles) {
-            $grid.innerHTML = articles.map((article, i) => {
-                const title = article.title || 'Untitled';
-                const source = (article.source && article.source.name) || 'Unknown Source';
-                const desc = article.description || 'No description available.';
-                const url = article.url || '#';
-                const image = article.image || CONFIG.FALLBACK_IMAGE;
-                const date = formatDate(article.publishedAt);
+        function loadArticle() {
+            const params = new URLSearchParams(window.location.search);
+            const cat = params.get('cat');
+            const id = parseInt(params.get('id'), 10);
 
-                return `
-          <article class="card" id="card-${i + 1}">
-            <div class="card-image">
-              <img src="${image}" alt="${title.replace(/"/g, '&quot;')}" loading="${i === 0 ? 'eager' : 'lazy'}" onerror="this.parentElement.innerHTML='<div class=\\'img-placeholder\\'>🗞️</div>'">
-            </div>
-            <div class="card-body">
-              <span class="featured-badge">⭐ Top Story</span>
-              <div class="card-source">
-                <span class="source-dot"></span>
-                ${source}
-              </div>
-              <h2 class="card-title">${title}</h2>
-              <p class="card-desc">${desc}</p>
-              <div class="card-footer">
-                <span class="card-date">${date}</span>
-                <a href="article.html?cat=${currentCategory}&id=${i}" class="read-more" id="readmore-${i + 1}">
-                  Read More <span class="arrow">→</span>
-                </a>
-              </div>
-            </div>
-          </article>
-        `;
-            }).join('');
-        }
-
-        /* =========================
-           LOADING SKELETON
-        ========================= */
-        function renderSkeleton() {
-            let skeletons = '';
-            for (let i = 0; i < CONFIG.HEADLINE_COUNT; i++) {
-                skeletons += `
-          <div class="skeleton-card">
-            <div class="skeleton-img"></div>
-            <div class="skeleton-body">
-              <div class="skeleton-line short"></div>
-              <div class="skeleton-line long title"></div>
-              <div class="skeleton-line medium"></div>
-              <div class="skeleton-line medium"></div>
-            </div>
-          </div>
-        `;
-            }
-            $grid.innerHTML = skeletons;
-        }
-
-        /* =========================
-           ERROR STATE
-        ========================= */
-        function renderError(message) {
-            $grid.innerHTML = `
-        <div class="error-state">
-          <span class="error-icon">😔</span>
-          <h2>Couldn't load headlines</h2>
-          <p>${message || 'Something went wrong while fetching today\'s headlines. Please try again.'}</p>
-          <button class="retry-btn" id="retryBtn" onclick="loadHeadlines(currentCategory, true)">Try Again</button>
-        </div>
-      `;
-        }
-
-        /* =========================
-           MAIN LOADER
-        ========================= */
-        async function loadHeadlines(category, forceRefresh = false) {
-            currentCategory = category;
-
-            // Check cache first
-            if (!forceRefresh) {
-                const cached = getCachedHeadlines(category);
-                if (cached) {
-                    renderCards(cached);
-                    return;
-                }
+            if (!cat || isNaN(id)) {
+                showError('Invalid article link.');
+                return;
             }
 
-            // Show loading skeleton
-            renderSkeleton();
+            const today = new Date().toISOString().slice(0, 10);
+            const key = CONFIG.CACHE_PREFIX + cat + '_' + today;
+            const data = localStorage.getItem(key);
+
+            if (!data) {
+                showError('Article not found in today\'s cache. Please go back and refresh.');
+                return;
+            }
 
             try {
-                const articles = await fetchHeadlines(category);
-                cacheHeadlines(category, articles);
-                renderCards(articles);
+                const articles = JSON.parse(data);
+                const article = articles[id];
+                if (!article) throw new Error('Article index out of bounds');
+
+                renderArticle(article);
             } catch (err) {
-                console.error('Failed to load headlines:', err);
-                let errorMsg;
-                if (err.message.toLowerCase().includes('api key')) {
-                    errorMsg = 'API key is missing or invalid. Please check your config.js file.';
-                } else if (err.message === 'No articles found') {
-                    errorMsg = 'No articles found for this category right now. Try another category!';
-                } else {
-                    errorMsg = 'The news API might be temporarily unavailable. Check your internet connection and try again.';
-                }
-                renderError(errorMsg);
+                showError('Failed to load article data.');
             }
         }
 
-        /* =========================
-           CATEGORY BUTTONS
-        ========================= */
-        $categories.addEventListener('click', (e) => {
-            const btn = e.target.closest('.category-btn');
-            if (!btn) return;
+        function renderArticle(article) {
+            const title = article.title || 'Untitled';
+            const source = (article.source && article.source.name) || 'Unknown Source';
+            const desc = article.description || article.content || 'No detailed content available for this article.';
+            const url = article.url || '#';
+            const image = article.image || CONFIG.FALLBACK_IMAGE;
+            const date = formatDate(article.publishedAt);
 
-            const category = btn.dataset.category;
-            if (!category) return; // Allow normal links to work
+            $container.innerHTML = `
+                <div class="article-header">
+                    <div class="article-source">
+                        <span class="source-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+                        ${source}
+                    </div>
+                    <h1 class="article-title">${title}</h1>
+                    <div class="article-meta">
+                        <span>${date}</span>
+                    </div>
+                </div>
+                <div class="article-image">
+                    <img src="${image}" alt="${title.replace(/"/g, '&quot;')}" onerror="this.src='${CONFIG.FALLBACK_IMAGE}'">
+                </div>
+                <div class="article-content">
+                    <p>${desc}</p>
+                    ${article.content && article.content !== article.description ? `<p>${article.content}</p>` : ''}
+                </div>
+                <a href="${url}" target="_blank" rel="noopener noreferrer" class="read-original">
+                    Read Full Story on ${source} <span class="arrow">↗</span>
+                </a>
+            `;
+        }
 
-            if (category === currentCategory) return;
+        function showError(msg) {
+            $container.innerHTML = `
+                <div class="error-state" style="text-align: center; padding: 60px 20px;">
+                    <span class="error-icon" style="font-size: 56px; display: block; margin-bottom: 16px;">😔</span>
+                    <h2 style="font-size: 24px; margin-bottom: 12px;">Oops</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">${msg}</p>
+                    <a href="javascript:history.back()" class="back-btn">Go Back</a>
+                </div>
+            `;
+        }
 
-            // Update active state
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Load headlines for this category
-            loadHeadlines(category);
-        });
-
-        /* =========================
-           INITIALIZE
-        ========================= */
         (function init() {
             initTheme();
-            startCountdown();
-            loadHeadlines('general');
+            loadArticle();
         })();
     </script>
     <!-- Simple approach — no fetch, no eval needed -->
