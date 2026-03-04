@@ -814,12 +814,199 @@
             }
         }
 
+        /* ===== Ad Banners ===== */
+        .ad,
+        .advertisement {
+            display: block;
+            width: 100%;
+            padding: 18px 24px;
+            margin: 28px 0;
+            border-radius: 14px;
+            border: 1px dashed var(--border);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(236, 72, 153, 0.06));
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ad:hover,
+        .advertisement:hover {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.12));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+        }
+
+        .ad-label {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .ad-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .ad-cta {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 18px;
+            border-radius: 8px;
+            background: var(--gradient-accent);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .ad-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* ===== Search Bar ===== */
+        .article-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 24px;
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .article-search-bar:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .article-search-bar input[type="search"] {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .article-search-bar input[type="search"]::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .search-icon {
+            font-size: 16px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== Related Articles ===== */
+        .related-articles {
+            margin: 40px 0 20px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-articles h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .related-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-glass);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .related-item:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .related-item .ri-emoji {
+            font-size: 20px;
+        }
+
+        /* ===== Share Buttons ===== */
+        .share-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 24px 0;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .share-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
         /* ===== Print ===== */
         @media print {
 
             .theme-toggle,
             .back-btn,
-            .read-original {
+            .read-original,
+            .ad,
+            .advertisement,
+            .article-search-bar,
+            .share-bar {
                 display: none;
             }
         }
@@ -844,14 +1031,85 @@
             </div>
         </header>
 
-        <div class="nav-bar" style="margin-top: 20px;">
+        <!-- ===== Search Bar (trackable: search event) ===== -->
+        <div style="max-width: 800px; margin: 20px auto 0; padding: 0 16px;">
+            <form role="search" class="article-search-bar" id="articleSearchForm" onsubmit="return false;">
+                <span class="search-icon">🔍</span>
+                <input type="search" id="articleSearchInput" placeholder="Search news headlines..." autocomplete="off">
+            </form>
+        </div>
+
+        <div class="nav-bar" style="max-width: 800px; margin: 0 auto; padding: 0 16px;">
             <a href="javascript:history.back()" class="back-btn">← Back to News</a>
+        </div>
+
+        <!-- ===== Top Ad Banner (trackable: ad_click, ad_view) ===== -->
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 16px;">
+            <div class="ad" data-ad="top-banner" data-ad-id="ad-top-001" id="ad-top-banner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-title">📢 Stay ahead with Premium News Insights</div>
+                <p>Get real-time, AI-curated headlines delivered to your inbox daily.</p>
+                <a href="#" class="ad-cta" data-ad-action="cta-click">Learn More →</a>
+            </div>
         </div>
 
         <!-- ===== Article Content ===== -->
         <main class="article-container" id="articleContainer">
             <!-- Content will be injected by JS -->
         </main>
+
+        <!-- ===== Mid-Article Ad Banner (trackable: ad_click, ad_view) ===== -->
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 16px;">
+            <div class="advertisement" data-ad="mid-banner" data-ad-id="ad-mid-001" id="ad-mid-banner">
+                <span class="ad-label">Ad</span>
+                <div class="ad-title">🚀 Upgrade to Premium Reading</div>
+                <p>Ad-free experience, bookmark articles, and offline reading mode.</p>
+                <a href="#" class="ad-cta" data-ad-action="cta-click">Try Free for 7 Days</a>
+            </div>
+        </div>
+
+        <!-- ===== Share Buttons (trackable: click, share events) ===== -->
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 16px;">
+            <div class="share-bar" id="shareBar">
+                <a href="#" class="share-btn" data-share="twitter" id="share-twitter" onclick="return false;">🐦
+                    Tweet</a>
+                <a href="#" class="share-btn" data-share="facebook" id="share-facebook" onclick="return false;">📘
+                    Share</a>
+                <a href="#" class="share-btn" data-share="linkedin" id="share-linkedin" onclick="return false;">💼
+                    LinkedIn</a>
+                <a href="#" class="share-btn" data-share="whatsapp" id="share-whatsapp" onclick="return false;">💬
+                    WhatsApp</a>
+                <button class="share-btn" data-share="copy" id="share-copy">📋 Copy Link</button>
+            </div>
+        </div>
+
+        <!-- ===== Related Articles (trackable: click events) ===== -->
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 16px;">
+            <div class="related-articles" id="relatedArticles">
+                <h3>📰 You Might Also Like</h3>
+                <div class="related-list">
+                    <a href="article.html?cat=general&id=0" class="related-item" id="related-1">
+                        <span class="ri-emoji">🌍</span> Latest World News Headlines
+                    </a>
+                    <a href="article.html?cat=general&id=1" class="related-item" id="related-2">
+                        <span class="ri-emoji">💰</span> Business & Finance Updates
+                    </a>
+                    <a href="article.html?cat=general&id=2" class="related-item" id="related-3">
+                        <span class="ri-emoji">🏆</span> Top Sports Stories Today
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Bottom Ad Banner (trackable: ad_click, ad_view) ===== -->
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 16px 20px;">
+            <div class="ad" data-ad="bottom-banner" data-ad-id="ad-bottom-001" id="ad-bottom-banner">
+                <span class="ad-label">Sponsored</span>
+                <div class="ad-title">📱 Download the 5 Headlines App</div>
+                <p>Never miss a beat. Your daily dose of intentional news, right in your pocket.</p>
+                <a href="#" class="ad-cta" data-ad-action="cta-click">Download Now</a>
+            </div>
+        </div>
 
         <!-- ===== Footer ===== -->
         <footer class="app-footer">
