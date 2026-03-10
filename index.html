@@ -756,7 +756,7 @@
         <!-- ===== Footer ===== -->
         <footer class="app-footer">
             <p>© 2026 5 Headlines a Day · Made with <span class="heart">♥</span></p>
-            <p>Powered by <a href="https://gnews.io" target="_blank" rel="noopener">GNews API</a></p>
+            <p>Powered by <a href="https://gnews.io" target="_blank" rel="noopener">GNews API</a> · <a href="https://morning-news-brief.vercel.app/" target="_blank" rel="noopener">Brief News</a></p>
         </footer>
     </div>
 
@@ -878,24 +878,40 @@
            FETCH HEADLINES
         ========================= */
         async function fetchHeadlines(category) {
-            let url = `/.netlify/functions/headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
+            const params = `category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}`;
             let response = null;
 
             if (window.location.hostname !== '' && !window.location.hostname.includes('localhost')) {
+                // Try Vercel API path first
                 try {
-                    console.log('Attempting Netlify proxy for API call');
-                    const res = await fetch(url);
+                    console.log('Attempting Vercel API proxy...');
+                    const res = await fetch(`/api/headlines?${params}`);
                     const contentType = res.headers.get("content-type");
                     if (res.ok && contentType && contentType.includes("application/json")) {
                         response = res;
                     }
                 } catch (e) {
-                    console.log('Proxy fetch failed.');
+                    console.log('Vercel proxy failed.');
+                }
+
+                // Try Netlify API path as fallback
+                if (!response) {
+                    try {
+                        console.log('Attempting Netlify proxy...');
+                        const res = await fetch(`/.netlify/functions/headlines?${params}`);
+                        const contentType = res.headers.get("content-type");
+                        if (res.ok && contentType && contentType.includes("application/json")) {
+                            response = res;
+                        }
+                    } catch (e) {
+                        console.log('Netlify proxy failed.');
+                    }
                 }
             }
 
+            // Last resort: direct API call (local dev)
             if (!response) {
-                url = `${CONFIG.API_BASE}/top-headlines?category=${category}&lang=en&max=${CONFIG.HEADLINE_COUNT}&apikey=${CONFIG.API_KEY}`;
+                const url = `${CONFIG.API_BASE}/top-headlines?${params}&apikey=${CONFIG.API_KEY}`;
                 console.log('Using direct API call (local fallback)');
                 response = await fetch(url);
             }
