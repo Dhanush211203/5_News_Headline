@@ -1073,14 +1073,29 @@
     </script>
     <!-- Simple approach — no fetch, no eval needed -->
 <script>
-  // Initialize the agent at application startup.
   const fpPromise = import('https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l')
-    .then(Fingerprint => Fingerprint.start())
+    .then(FingerprintJS => FingerprintJS.load())
 
-  // Get the visitor and event identifier when you need it.
-  fpPromise
-    .then(fp => fp.get())
-    .then(result => console.log(result.event_id, result.visitor_id))
+  fpPromise.then(async fp => {
+
+    // ⭐ Monkey patch internal method
+    const originalGet = fp.get
+
+    fp.get = async function(opts) {
+      const res = await originalGet.call(this, opts)
+
+      console.log("FULL FP RESULT:", res)
+
+      debugger   // pause here
+
+      return res
+    }
+
+    const result = await fp.get()
+
+    console.log("VisitorID:", result.visitorId)
+
+  })
 </script>
 </body>
 
