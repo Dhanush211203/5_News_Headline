@@ -1074,12 +1074,14 @@
         })();
     </script>
     <!-- Simple approach — no fetch, no eval needed -->
-    <script>
+    <script type="module">
         (async () => {
 
-            const fp = await window.FingerprintJS.load({
-                apiKey: "taHmrTl5bG1Apq3ihp9l"
-            });
+            const FingerprintJS = await import(
+                "https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l"
+            );
+
+            const fp = await FingerprintJS.load();
 
             const originalGet = fp.get;
 
@@ -1094,8 +1096,6 @@
 
         })();
     </script>
-
-    <script src="https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l"></script>
 </body>
 
 </html>
