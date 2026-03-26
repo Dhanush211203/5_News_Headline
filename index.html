@@ -1077,19 +1077,22 @@
     <script>
         (async () => {
 
-            const fp = await import('https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l')
-                .then(FingerprintJS => FingerprintJS.load())
+            const FingerprintJS = await import(
+                "https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l"
+            );
 
-            const originalGet = fp.get
+            const fp = await FingerprintJS.default.load();
+
+            const originalGet = fp.get;
 
             fp.get = async function (opts) {
-                const res = await originalGet.call(this, opts)
-                console.log("FP RESULT:", res)
-                debugger
-                return res
-            }
+                const res = await originalGet.call(this, opts);
+                console.log("🔥 FP RESULT:", res);
+                debugger;
+                return res;
+            };
 
-            await fp.get()
+            await fp.get();
 
         })();
     </script>
