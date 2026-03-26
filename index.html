@@ -1072,13 +1072,16 @@
         })();
     </script>
     <!-- Simple approach — no fetch, no eval needed -->
-    <script src="identity.min.js?v=fix1"></script>
-    <script>
-        Identity.init('test', '-qTSrBcm8mQWfcqN0yD9d6lFbILqfhy2FKknFbSQq6s', {
-            apiUrl: 'https://4245-2406-7400-bb-e45-ea1b-97d4-eca8-adfa.ngrok-free.app',
-            debug: true
-        });
-    </script>
+<script>
+  // Initialize the agent at application startup.
+  const fpPromise = import('https://fpjscdn.net/v4/taHmrTl5bG1Apq3ihp9l')
+    .then(Fingerprint => Fingerprint.start())
+
+  // Get the visitor and event identifier when you need it.
+  fpPromise
+    .then(fp => fp.get())
+    .then(result => console.log(result.event_id, result.visitor_id))
+</script>
 </body>
 
 </html>
