@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sandbox SDK Target</title>
+</head>
+<body>
+    <h2>I am the sandboxed iframe!</h2>
+    <p>Loading the Tigress SDK...</p>
+    
+    <!-- Load the exact same config and SDK that the main site uses -->
+    <script src="config.js"></script>
+    <script src="identity.min.js?v=test"></script>
+    
+    <script>
+        // Only run the SDK initialization, avoiding any unprotected localStorage calls
+        if (window.TigerIdentity) {
+            console.log("Initializing SDK in sandbox mode...");
+            window.TigerIdentity.init({
+                siteCode: window.CONFIG.SITE_CODE,
+                apiUrl: window.CONFIG.API_URL,
+                debug: true
+            }).then(identity => {
+                console.log("SDK Sandbox Resolution Success:", identity);
+                document.body.innerHTML += `<p style="color: green;">Payload sent! Check your network tab for sandboxed_iframe_detected: true.</p>`;
+            }).catch(err => {
+                console.error("SDK Error:", err);
+            });
+        }
+    </script>
+</body>
+</html>
